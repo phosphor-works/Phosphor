@@ -30,8 +30,9 @@ The repository has no code yet. The plans are workspace issues:
 
 - workspace#30: how Phosphor uses the engine runtime, the decisions, the phases, the session and the protocols.
 - workspace#66: rendering, GPU, sync, the backends and the nested mode.
-- workspace#69 to workspace#72: the library work that Phosphor needs (screens, overlays in the compositor process,
-  the Placement D-Bus adaptors, the compositor side of placement).
+- workspace#69 to workspace#72 and workspace#75: the library work that Phosphor needs (screens, overlays in the
+  compositor process, the Placement D-Bus adaptors, the compositor side of placement, live interactive resize in the
+  engines).
 
 The first design (`docs/phosphor-compositor-core*`) is only on the PlasmaZones branch `feat/engine-data`. It is
 history. Where it disagrees with the issues, the issues are correct.
