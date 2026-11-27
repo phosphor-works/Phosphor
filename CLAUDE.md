@@ -26,20 +26,31 @@ them. The app and repository are `Phosphor`, and its package is `phosphor`.
 
 ### State
 
-The repository has no code yet. The design is in PlasmaZones: `docs/phosphor-compositor-core/` (from
-`00-index.md` and `01-architecture.md` to the phase chapters) and `docs/phosphor-compositor-core-plan.md`. It still
-uses the old `org.plasmazones` names, which become `org.phosphor_works`. Phase 8 of the Phosphor Split Plan moves it
-here.
+The repository has no code yet. The plans are workspace issues:
+
+- workspace#30: how Phosphor uses the engine runtime, the decisions, the phases, the session and the protocols.
+- workspace#66: rendering, GPU, sync, the backends and the nested mode.
+- workspace#69 to workspace#72: the library work that Phosphor needs (screens, overlays in the compositor process,
+  the Placement D-Bus adaptors, the compositor side of placement).
+
+The first design (`docs/phosphor-compositor-core*`) is only on the PlasmaZones branch `feat/engine-data`. It is
+history. Where it disagrees with the issues, the issues are correct.
 
 ### The design
 
-- Phosphor links phosphor-libs and phosphor-engine-libs, and is rebuilt when their ABI changes.
-- It implements the engine runtime's host interfaces itself: `ICompositorBridge` as direct calls into the scene,
-  overlays as scene nodes, idle from its own input, shortcuts as its own `PhosphorShortcuts::IBackend`, and its own
-  config path through `PhosphorConfig::IBackend`.
-- In its own session it owns `org.phosphor_works.Placement`, the public placement API that Facet and scripts call.
-  `plasmazonesd` starts only under KWin, so the two hosts never share a session.
-- The runtime runs on Phosphor's Qt event loop and thread.
+- Phosphor bundles its private copies of the phosphor libraries, built from the commits that it pins, and is
+  rebuilt when their ABI changes. It uses private Qt API, so it works only with the Qt patch release that it was
+  built against.
+- It gives the engine runtime the seams of `EngineRuntime::Platform` itself: an in-process layer-shell transport
+  that renders the overlays offscreen as scene nodes, the presentation host, panels from the layer-shell exclusive
+  zones, its workspaces, idle from its own input, and its own `PhosphorShortcuts::IBackend`. It does not give an
+  `IOverlayService`: the runtime makes its own. workspace#30 has the full list.
+- The compositor side of placement (drag, snap, tiling, navigation) is the work that the KWin effect does under
+  KWin. Phosphor does it with direct calls to the runtime services (workspace#72).
+- In its own session it owns `org.phosphor_works.Placement`, the public placement API that Lambent, Facet and
+  scripts call. It owns the name before it starts any client. `plasmazonesd` starts only under KWin, so the two hosts
+  never share a session.
+- The runtime runs on Phosphor's Qt event loop and main thread.
 
 ## Layout
 
